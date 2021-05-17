@@ -1,100 +1,131 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <PropertyGroup>
-        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-        <SchemaVersion>2.0</SchemaVersion>
-        <ProjectGuid>{bcbf40ae-171e-418d-a9cd-4ad170c76034}</ProjectGuid>
-        <ProjectHome>.</ProjectHome>
-        <ProjectView>ShowAllFiles</ProjectView>
-        <StartupFile />
-        <WorkingDirectory>.</WorkingDirectory>
-        <OutputPath>.</OutputPath>
-        <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
-        <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">16.0</VisualStudioVersion>
-        <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
-    <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
-    <ItemGroup>
-        <Content Include="package.json" />
-        <Content Include="README.md" />
-        <Content Include="demo\index.html" />
-        <Content Include="demo\demo.js" />
-        <Content Include="demo\webpack.config.js" />
-        <Content Include="src\default-props.js" />
-        <Content Include="src\index.js" />
-        <Content Include="src\material-table.js" />
-        <Content Include="src\prop-types.js" />
-        <Content Include="src\components\index.js" />
-        <Content Include="src\components\m-table-action.js" />
-        <Content Include="src\components\m-table-actions.js" />
-        <Content Include="src\components\m-table-body-row.js" />
-        <Content Include="src\components\m-table-body.js" />
-        <Content Include="src\components\m-table-cell.js" />
-        <Content Include="src\components\m-table-edit-cell.js" />
-        <Content Include="src\components\m-table-edit-field.js" />
-        <Content Include="src\components\m-table-edit-row.js" />
-        <Content Include="src\components\m-table-filter-row.js" />
-        <Content Include="src\components\m-table-group-row.js" />
-        <Content Include="src\components\m-table-groupbar.js" />
-        <Content Include="src\components\m-table-header.js" />
-        <Content Include="src\components\m-table-pagination.js" />
-        <Content Include="src\components\m-table-stepped-pagination.js" />
-        <Content Include="src\components\m-table-toolbar.js" />
-        <Content Include="src\utils\common-values.js" />
-        <Content Include="src\utils\data-manager.js" />
-        <Content Include="src\utils\index.js" />
-        <Content Include="src\utils\polyfill\array.find.js" />
-        <Content Include="src\utils\polyfill\index.js" />
-    </ItemGroup>
-    <ItemGroup>
-        <Folder Include="configs" />
-        <Folder Include="demo" />
-        <Folder Include="Material-Table" />
-        <Folder Include="src" />
-        <Folder Include="src\components" />
-        <Folder Include="src\utils" />
-        <Folder Include="src\utils\polyfill" />
-        <Folder Include="types" />
-    </ItemGroup>
-    <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-    <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
-    <ProjectExtensions>
-        <VisualStudio>
-          <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
-            <WebProjectProperties>
-              <UseIIS>False</UseIIS>
-              <AutoAssignPort>True</AutoAssignPort>
-              <DevelopmentServerPort>0</DevelopmentServerPort>
-              <DevelopmentServerVPath>/</DevelopmentServerVPath>
-              <IISUrl>http://localhost:48022/</IISUrl>
-              <NTLMAuthentication>False</NTLMAuthentication>
-              <UseCustomServer>True</UseCustomServer>
-              <CustomServerUrl>http://localhost:1337</CustomServerUrl>
-              <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
-            </WebProjectProperties>
-          </FlavorProperties>
-          <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
-            <WebProjectProperties>
-              <StartPageUrl>
-              </StartPageUrl>
-              <StartAction>CurrentPage</StartAction>
-              <AspNetDebugging>True</AspNetDebugging>
-              <SilverlightDebugging>False</SilverlightDebugging>
-              <NativeDebugging>False</NativeDebugging>
-              <SQLDebugging>False</SQLDebugging>
-              <ExternalProgram>
-              </ExternalProgram>
-              <StartExternalURL>
-              </StartExternalURL>
-              <StartCmdLineArguments>
-              </StartCmdLineArguments>
-              <StartWorkingDirectory>
-              </StartWorkingDirectory>
-              <EnableENC>False</EnableENC>
-              <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
-            </WebProjectProperties>
-          </FlavorProperties>
-        </VisualStudio>
-    </ProjectExtensions>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{bcbf40ae-171e-418d-a9cd-4ad170c76034}</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <ProjectView>ShowAllFiles</ProjectView>
+    <StartupFile />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">16.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <ItemGroup>
+    <Content Include="configs\.babelrc" />
+    <Content Include="configs\.eslintrc" />
+    <Content Include="dist\components\index.js" />
+    <Content Include="dist\components\m-table-action.js" />
+    <Content Include="dist\components\m-table-actions.js" />
+    <Content Include="dist\components\m-table-body-row.js" />
+    <Content Include="dist\components\m-table-body.js" />
+    <Content Include="dist\components\m-table-cell.js" />
+    <Content Include="dist\components\m-table-edit-cell.js" />
+    <Content Include="dist\components\m-table-edit-field.js" />
+    <Content Include="dist\components\m-table-edit-row.js" />
+    <Content Include="dist\components\m-table-filter-row.js" />
+    <Content Include="dist\components\m-table-group-row.js" />
+    <Content Include="dist\components\m-table-groupbar.js" />
+    <Content Include="dist\components\m-table-header.js" />
+    <Content Include="dist\components\m-table-pagination.js" />
+    <Content Include="dist\components\m-table-stepped-pagination.js" />
+    <Content Include="dist\components\m-table-toolbar.js" />
+    <Content Include="dist\default-props.js" />
+    <Content Include="dist\index.js" />
+    <Content Include="dist\material-table.js" />
+    <Content Include="dist\prop-types.js" />
+    <Content Include="dist\utils\common-values.js" />
+    <Content Include="dist\utils\data-manager.js" />
+    <Content Include="dist\utils\index.js" />
+    <Content Include="dist\utils\polyfill\array.find.js" />
+    <Content Include="dist\utils\polyfill\index.js" />
+    <Content Include="package.json" />
+    <Content Include="README.md" />
+    <Content Include="demo\index.html" />
+    <Content Include="demo\demo.js" />
+    <Content Include="demo\webpack.config.js" />
+    <Content Include="src\default-props.js" />
+    <Content Include="src\index.js" />
+    <Content Include="src\material-table.js" />
+    <Content Include="src\prop-types.js" />
+    <Content Include="src\components\index.js" />
+    <Content Include="src\components\m-table-action.js" />
+    <Content Include="src\components\m-table-actions.js" />
+    <Content Include="src\components\m-table-body-row.js" />
+    <Content Include="src\components\m-table-body.js" />
+    <Content Include="src\components\m-table-cell.js" />
+    <Content Include="src\components\m-table-edit-cell.js" />
+    <Content Include="src\components\m-table-edit-field.js" />
+    <Content Include="src\components\m-table-edit-row.js" />
+    <Content Include="src\components\m-table-filter-row.js" />
+    <Content Include="src\components\m-table-group-row.js" />
+    <Content Include="src\components\m-table-groupbar.js" />
+    <Content Include="src\components\m-table-header.js" />
+    <Content Include="src\components\m-table-pagination.js" />
+    <Content Include="src\components\m-table-stepped-pagination.js" />
+    <Content Include="src\components\m-table-toolbar.js" />
+    <Content Include="src\utils\common-values.js" />
+    <Content Include="src\utils\data-manager.js" />
+    <Content Include="src\utils\index.js" />
+    <Content Include="src\utils\polyfill\array.find.js" />
+    <Content Include="src\utils\polyfill\index.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="configs" />
+    <Folder Include="demo" />
+    <Folder Include="dist\" />
+    <Folder Include="dist\components\" />
+    <Folder Include="dist\utils\" />
+    <Folder Include="dist\utils\polyfill\" />
+    <Folder Include="Material-Table" />
+    <Folder Include="src" />
+    <Folder Include="src\components" />
+    <Folder Include="src\utils" />
+    <Folder Include="src\utils\polyfill" />
+    <Folder Include="types" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:48022/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost:1337</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>False</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>
