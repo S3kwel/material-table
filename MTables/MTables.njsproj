@@ -29,8 +29,25 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="app.js" />
+    <Content Include="demo\index.html">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="MTables.css">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Content Include="src\index.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="webpack.config.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="configs\" />
+    <Folder Include="demo\" />
+    <Folder Include="dist\" />
+    <Folder Include="src\" />
+    <Folder Include="types\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
 </Project>
