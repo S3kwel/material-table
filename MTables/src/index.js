@@ -9,16 +9,20 @@ import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import MaterialTable from "material-table";
 import REGEX from './regex'; 
+import defaultCrud from './defaultCrud'; 
 import "../MTables.css";
+import { isArray } from "util";
+import { display } from "@material-ui/system";
 
 console.clear(); 
 
 const MTableOptions = {
     display: {
         default: {
-            showTitle: true, //Sets toolbar.  
-            addEmptyRows: false, //Sets emptyRowsWhenPaging. 
-            pagination: false //sets paging.
+            showTitle: false,
+            emptyRowsWhenPaging: false,
+            paging: false,
+            search: false
         }
     },
     validation: {
@@ -56,32 +60,52 @@ const MTableOptions = {
                 { title: "First Name", field: "name" },
                 { title: "Last Name", field: "lastName" },
                 { title: "Number", field: "number" },
+                { title: "Test", field: "complexData.value" },
             ],
             data: [
-                { name: "Dustin", surname: "Hickman", complexData: {id: 0, value: "TEST"} },
+                { name: "Dustin", lastName: "Hickman", complexData: { id: 0, value: "TEST" }, number: 3 },
             ],
-            nestedData: {used: true, preserveKeys: false}
+            editable: {
+                state: true,
+                submitMode: {
+                    type: "API",
+                    url: "/test",
+                    valueType: "basic",
+                }
+            },
+            nestedData: { used: true, preserveKeys: false },
+            mtableProps: {}
         }
     ]
 }
 
 function MTable(props) {
-    const [tableData, setTableData] = useState({}); 
+    const [tableData, setTableData] = useState(null); 
+
+    function getValue(tableID, columnName) {
+        let sourceData = tableData.tables || props.tables; 
+
+        let value = sourceData.tables[tableID].data[columnName]; 
+        if (value) {
+            return value;
+        }
+        else {
+            console.warn(`getValue(${tableID}.${columnName} is returning false because the value could not be found.`); 
+            return false; 
+        }
+    }
 
     function parseData(table) {
-        console.log(`parsing data for table ${table.name || table.id}...`); 
        
         //If the table is using nested data, we will need to expand the object.  
         if (table.nestedData) {
 
             if (table.nestedData.used) {
-                console.log("expanding tale data");
                 for (let datum of table.data) {
                     let tempData = JSON.parse(JSON.stringify(datum)); 
 
                     for (let dataKey of Object.keys(datum)) {
                         if (typeof datum[dataKey] === 'object') {
-                            console.log(`found nested data for ${dataKey}`);
                             for (let subKey of Object.keys(datum[dataKey])) {
                                 let expandedKey = `${dataKey}.${subKey}`; 
                                 let object = datum[dataKey]; 
@@ -91,22 +115,16 @@ function MTable(props) {
                                     delete tempData[dataKey];
                                 }
                             }
-                            console.log('original row', datum); 
-                            console.log('modified row', tempData);
-                            table.data = tempData; 
-
+                         
                         }
                     }
+                    table.data[table.data.indexOf(datum)] = tempData; 
                 }
             }
-            console.log("------"); 
-
-
         }
     }
 
     function parseFormula(formula, thisRow) {
-        console.log(`Parsing a formula: ${formula}`); 
         let functionCheck = REGEX.parse('func', formula); 
 
         //If this property exists, there were results.  
@@ -137,7 +155,7 @@ function MTable(props) {
             
             for (let col of validation.columns) {
                 let colIndex = validation.columns.indexOf(col); 
-                let temp = "return ";
+                let temp = "console.log(value); return ";
                 let functionParts = {}; 
 
 
@@ -175,22 +193,28 @@ function MTable(props) {
                     let tempFunc = new Function('value', temp); 
 
                     //Flush the function is as validation for material-table.  
-                    props.tables[props.tables.indexOf(table)].columns[colIndex]['validate'] = r => tempFunc(r); 
+                    
+                    props.tables[props.tables.indexOf(table)].columns[colIndex]['validate'] = r => tempFunc(r[props.tables[props.tables.indexOf(table)].columns[colIndex].field]); 
 
                    
                 }
             }
-            console.log(props.tables); 
         }
-
-        
-
-        console.log("-----");
     }
 
+    function parseMutation(table) {
+        let temp = {
+            onRowAdd: rowData => defaultCrud.add, 
+            onRowUpdate: (newData, oldData) => defaultCrud.update, 
+            onRowDelete: oldData => defaultCrud.delete
+        }        
+        table.mtableProps.editable = temp; 
+    }
+
+
     //Initial state setup.
-    console.log()
-    if (Object.keys(tableData).length == 0) {
+    let returnData; 
+    if (!tableData) {
         for (let table of props.tables) {
             let friendlyName = table.title || table.id; //Only used in logging.  
 
@@ -202,14 +226,45 @@ function MTable(props) {
             if (table.data) {
                 parseData(table);
             }
-            console.log(`Parsing validation constraints for ${friendlyName}...`);
+
             parseValidation(table);
+
+            if (table.editable && table.editable.state) {
+                parseMutation(table);
+            }
         }
+
+
         setTableData(props);
     }
 
     else {
-        console.log(props); 
+        let tables = []; 
+
+        for (let table of tableData.tables) {
+            console.log(table.data); 
+            console.log(isArray(table.data)); 
+
+            //General data
+            let tempData = {
+                key: table.id,
+                columns: table.columns, 
+                data: table.data,  
+                title: table.title || null,
+                editable: table.mtableProps.editable || null 
+            };
+
+            //Display data 
+            if (props.display[table.id]) {
+                tempData.options = props.display[table.id]; 
+            }
+            else {
+                tempData.options = props.display['default']; 
+            }
+          
+            tables.push(<MaterialTable {...tempData} />);
+        }
+        return (<div> {tables} </div>); 
     }
 
 
@@ -244,22 +299,7 @@ const options = {
     search: false,  // Whether to show the search bar.
     toolbar: false, //Seems to hide the title. 
 }
-/*
-class App extends Component {
-  render() {
-    return (
-      <div style={{ maxWidth: "100%" }}>
-        <MaterialTable
-                columns={ columns }
-                data={ data }
-                title="Demo Title"
-                options = { options }
-        />
-      </div>
-    );
-  }
-}
-*/
+
 
 ReactDOM.render(<MTable {...MTableOptions} />, document.getElementById("App"));
 

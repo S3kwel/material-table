@@ -37,7 +37,13 @@
     </Content>
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Content Include="src\defaultCrud.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="src\index.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\regex.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="webpack.config.js" />
