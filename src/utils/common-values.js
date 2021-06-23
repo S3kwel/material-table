@@ -8,7 +8,6 @@ export const actionsColumnWidth = (props) =>
   rowActions(props).length * baseIconSize(props);
 export const selectionMaxWidth = (props, maxTreeLevel) =>
   baseIconSize(props) + 9 * maxTreeLevel;
-
 export const reducePercentsInCalc = (calc, fullValue) => {
   const captureGroups = calc.match(/(\d*)%/);
   if (captureGroups && captureGroups.length > 1) {
@@ -17,3 +16,7 @@ export const reducePercentsInCalc = (calc, fullValue) => {
   }
   return calc.replace(/\d*%/, `${fullValue}px`);
 };
+export const localization = (generic, override) => {
+    return ({ ...generic.defaultProps.localization, ...override.localization })
+};
+

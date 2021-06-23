@@ -27,8 +27,13 @@ function parse(r, string) {
     else { return []; }
 
     let results = reg.exec(string);
-    results.splice(0,1); 
-    
+    if (results == null) {
+        results = [];
+    }
+    else {
+        results.splice(0, 1); 
+    }
+
     //If labels exist for this expression and the results match the expected length
     if (regex[r].labels && regex[r].labels.length == results.length) {
         let newResults = {};
@@ -42,9 +47,7 @@ function parse(r, string) {
         results = newResults; 
     }
 
-    else if (results == null) {
-        results = []; 
-    }
+   
     return results; 
 }
 

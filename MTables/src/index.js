@@ -5,26 +5,28 @@
  * 3. Modals for error messages?
  *
  * */
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef, forwardRef } from "react";
 import ReactDOM from "react-dom";
-import MaterialTable from "material-table";
+import MaterialTable from "@material-table/core";
 import REGEX from './regex'; 
 import defaultCrud from './defaultCrud'; 
+import Defaults from './defaults'; 
 import "../MTables.css";
-import { isArray } from "util";
-import { display } from "@material-ui/system";
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core"; 
+import { Paper } from '@material-ui/core';
+import { MTableToolbar } from '@material-table/core'; 
 
 console.clear(); 
 
+
+
+
+
+
+
+
 const MTableOptions = {
-    display: {
-        default: {
-            showTitle: false,
-            emptyRowsWhenPaging: false,
-            paging: false,
-            search: false
-        }
-    },
+    display: {},
     validation: {
         1: {
             rowFormula: "SUM(*) = 100",
@@ -63,7 +65,9 @@ const MTableOptions = {
                 { title: "Test", field: "complexData.value" },
             ],
             data: [
-                { name: "Dustin", lastName: "Hickman", complexData: { id: 0, value: "TEST" }, number: 3 },
+                { name: "Dustin", lastName: "Hickman", complexData: { id: 0, value: "TEST" }, number: 33 },
+                { name: "Dustin", lastName: "Hickman", complexData: { id: 0, value: "TEST" }, number: 33 },
+                { name: "Dustin", lastName: "Hickman", complexData: { id: 0, value: "TEST" }, number: 33 },
             ],
             editable: {
                 state: true,
@@ -75,31 +79,31 @@ const MTableOptions = {
             },
             nestedData: { used: true, preserveKeys: false },
             mtableProps: {}
-        }
+        },
     ]
 }
 
 function MTable(props) {
+    const tableRef = useRef(null); 
     const [tableData, setTableData] = useState(null); 
+    var sourceData = null; 
 
-    function getValue(tableID, columnName) {
-        let sourceData = tableData.tables || props.tables; 
 
-        let value = sourceData.tables[tableID].data[columnName]; 
-        if (value) {
-            return value;
-        }
-        else {
-            console.warn(`getValue(${tableID}.${columnName} is returning false because the value could not be found.`); 
-            return false; 
-        }
-    }
+    useEffect(() => {
+        init(sourceData); 
+    }, []);
+
+
+
+
+
+
+    if (tableData != null) {sourceData = tableData.tables}
+    else {sourceData = props.tables;}
 
     function parseData(table) {
-       
         //If the table is using nested data, we will need to expand the object.  
         if (table.nestedData) {
-
             if (table.nestedData.used) {
                 for (let datum of table.data) {
                     let tempData = JSON.parse(JSON.stringify(datum)); 
@@ -155,7 +159,7 @@ function MTable(props) {
             
             for (let col of validation.columns) {
                 let colIndex = validation.columns.indexOf(col); 
-                let temp = "console.log(value); return ";
+                let temp = " return ";
                 let functionParts = {}; 
 
 
@@ -202,20 +206,22 @@ function MTable(props) {
         }
     }
 
-    function parseMutation(table) {
+    function parseMutation(table, sourceData) {
         let temp = {
             onRowAdd: rowData => defaultCrud.add, 
-            onRowUpdate: (newData, oldData) => defaultCrud.update, 
-            onRowDelete: oldData => defaultCrud.delete
+            onRowUpdate: (newData, oldData) => defaultCrud.update(newData, oldData, props, setTableDataFromChild, table, tableRef), 
+            onRowDelete: oldData => defaultCrud.delete(oldData,props,setTableDataFromChild, table)
         }        
         table.mtableProps.editable = temp; 
     }
 
+    function setTableDataFromChild(newState) {
+        console.log("newState", newState); 
+        setTableData(newState); 
+    }
 
-    //Initial state setup.
-    let returnData; 
-    if (!tableData) {
-        for (let table of props.tables) {
+    function init(sourceData) {
+        for (let table of sourceData) {
             let friendlyName = table.title || table.id; //Only used in logging.  
 
             if (!table.columns) {
@@ -225,81 +231,48 @@ function MTable(props) {
 
             if (table.data) {
                 parseData(table);
+                parseValidation(table);
             }
 
-            parseValidation(table);
+
 
             if (table.editable && table.editable.state) {
-                parseMutation(table);
+                parseMutation(table, sourceData);
             }
         }
-
-
         setTableData(props);
     }
 
-    else {
-        let tables = []; 
-
-        for (let table of tableData.tables) {
-            console.log(table.data); 
-            console.log(isArray(table.data)); 
-
-            //General data
-            let tempData = {
-                key: table.id,
-                columns: table.columns, 
-                data: table.data,  
-                title: table.title || null,
-                editable: table.mtableProps.editable || null 
-            };
-
-            //Display data 
-            if (props.display[table.id]) {
-                tempData.options = props.display[table.id]; 
-            }
-            else {
-                tempData.options = props.display['default']; 
-            }
-          
-            tables.push(<MaterialTable {...tempData} />);
-        }
-        return (<div> {tables} </div>); 
-    }
-
-
-
+    
    
 
+    let tables = []; 
+     
+    for (let table of sourceData) {
+        let display = props.display[table.id] || Defaults.display;  
 
-    return (<div />); 
+        let tempData = {
+            key: table.id,
+            columns: table.columns, 
+            data: table.data,  
+            title: table.title || null,
+            editable: table.mtableProps.editable || null, 
+            renderSummaryRow: ({ data, index, columns }) => { },
+            tableRef: tableRef,
+            options: display 
+        };
+        let key = new Date().getTime(); 
+
+        tables.push(
+            <MuiThemeProvider key={"mtable_"+key} theme={createMuiTheme(display.theme)}>
+                <MaterialTable {...tempData} />
+            </MuiThemeProvider>
+        );
+    }
+          
+    return (<div> {tables} </div>); 
+
 }
-
-
-
-/****
- * Validation Semantics:
- * rowFormula: Each row in the table isn't valid unless it satisfies this formula.
- * - Some convenience notation provided. 
- *    - <SUM> :  The sum of all columns in this row.
- * - As much as possible, use natural mathematical language to enforce.
- * - strings in square brackets represent the value of individual columns.
- *    - i.e. [ColumnA] + [ColumnB] = 100
- * */
-
-
-//Design intent:  Allow passthrough to all the props material-table uses in its options, but provide convenience props in mine.  
-
-const options = {
-    emptyRowsWhenPaging: false, //Prevents the tables from padding rows to meet the page requirements.  
-    header: true, //Reference, hides the column names. 
-    headerStyle: {},
-    padding: "dense", //dense to reduce padding. 
-    paging: false,  // Whether to use paging.  
-    search: false,  // Whether to show the search bar.
-    toolbar: false, //Seems to hide the title. 
-}
-
 
 ReactDOM.render(<MTable {...MTableOptions} />, document.getElementById("App"));
 

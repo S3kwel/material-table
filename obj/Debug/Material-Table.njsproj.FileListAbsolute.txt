@@ -1,0 +1,2 @@
+C:\Users\dmhic\Desktop\MT\Material-Table\obj\Debug\Material-Table.njsproj.CoreCompileInputs.cache
+C:\Users\dmhic\Desktop\MT\Material-Table\bin\Microsoft.NodejsTools.WebRole.dll

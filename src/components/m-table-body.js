@@ -4,295 +4,263 @@ import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 import PropTypes from "prop-types";
 import * as React from "react";
+import * as CommonValues from "../utils/common-values"; 
 /* eslint-enable no-unused-vars */
 
-class MTableBody extends React.Component {
-  renderEmpty(emptyRowCount, renderData) {
-    const rowHeight = this.props.options.padding === "default" ? 49 : 36;
-    const localization = {
-      ...MTableBody.defaultProps.localization,
-      ...this.props.localization,
-    };
-    if (
-      this.props.options.showEmptyDataSourceMessage &&
-      renderData.length === 0
-    ) {
-      let addColumn = 0;
-      if (this.props.options.selection) {
-        addColumn++;
-      }
-      if (
-        this.props.actions &&
-        this.props.actions.filter(
-          (a) => a.position === "row" || typeof a === "function"
-        ).length > 0
-      ) {
-        addColumn++;
-      }
-      if (this.props.hasDetailPanel) {
-        addColumn++;
-      }
-      if (this.props.isTreeData) {
-        addColumn++;
-      }
-      return (
-        <TableRow
-          style={{
-            height:
-              rowHeight *
-              (this.props.options.paging &&
-              this.props.options.emptyRowsWhenPaging
-                ? this.props.pageSize
-                : 1),
-          }}
-          key={"empty-" + 0}
-        >
-          <TableCell
-            style={{ paddingTop: 0, paddingBottom: 0, textAlign: "center" }}
-            colSpan={this.props.columns.reduce(
-              (currentVal, columnDef) =>
-                columnDef.hidden ? currentVal : currentVal + 1,
-              addColumn
-            )}
-            key="empty-"
-          >
-            {localization.emptyDataSourceMessage}
-          </TableCell>
-        </TableRow>
-      );
-    } else if (this.props.options.emptyRowsWhenPaging) {
-      return (
-        <React.Fragment>
-          {[...Array(emptyRowCount)].map((r, index) => (
-            <TableRow style={{ height: rowHeight }} key={"empty-" + index} />
-          ))}
-          {emptyRowCount > 0 && (
-            <TableRow style={{ height: 1 }} key={"empty-last1"} />
-          )}
-        </React.Fragment>
-      );
+function MTableBody(props){
+
+    function renderEmpty(emptyRowCount, renderData) {
+        const rowHeight = props.options.padding === "default" ? 49 : 36; //NOTE: ROW HEIGHT GETS SET HERE
+        const localization = CommonValues.localization(MTableBody, props.localization); 
+
+        if (props.options.showEmptyDataSourceMessage && renderData.length === 0) {
+            let addColumn = 0;
+            if (props.options.selection) {
+                addColumn++;
+            }
+
+            if (props.actions && props.actions.filter((a) => a.position === "row" || typeof a === "function").length > 0) {
+                addColumn++;
+            }
+
+            if (props.isTreeData) {
+                addColumn++;
+            }
+
+            return (
+                <TableRow style={{ height: rowHeight * (props.options.paging && props.options.emptyRowsWhenPaging ? props.pageSize : 1) }} key={`empty-${0}`}>
+                    <TableCell
+                        style={{ paddingTop: 0, paddingBottom: 0, textAlign: "center" }} //NOTE:  Default CSS for empty rows.  
+                        colSpan={props.columns.reduce((currentVal, columnDef) => { columnDef.hidden ? currentval : currentVal + 1, addColumn })}
+                        key="empty-"
+                    >
+                        {localization.emptyDataSourceMessage}
+                    </TableCell>
+                </TableRow>
+            );
+        }
+        else if (props.options.emptyRowsWhenPaging) {
+            return (
+                <>
+                    {[...Array(emptyRowCount)].map((r, index) => (
+                        <TableRow style={{ height: rowHeight }} key={`empty-${index}`} />
+                    ))}
+                    {emptyRowCount > 0 && (
+                        <TableRow style={{ height: 1 }} key={"empty-last1"} />
+                    )}
+                </>
+            );
+        }
     }
-  }
 
-  renderUngroupedRows(renderData) {
-    return renderData.map((data, index) => {
-      if (data.tableData.editing || this.props.bulkEditOpen) {
-        return (
-          <this.props.components.EditRow
-            columns={this.props.columns.filter((columnDef) => {
-              return !columnDef.hidden;
-            })}
-            components={this.props.components}
-            data={data}
-            errorState={this.props.errorState}
-            icons={this.props.icons}
-            localization={{
-              ...MTableBody.defaultProps.localization.editRow,
-              ...this.props.localization.editRow,
-              dateTimePickerLocalization: this.props.localization
-                .dateTimePickerLocalization,
-            }}
-            key={"row-" + data.tableData.id}
-            mode={this.props.bulkEditOpen ? "bulk" : data.tableData.editing}
-            options={this.props.options}
-            isTreeData={this.props.isTreeData}
-            detailPanel={this.props.detailPanel}
-            onEditingCanceled={this.props.onEditingCanceled}
-            onEditingApproved={this.props.onEditingApproved}
-            getFieldValue={this.props.getFieldValue}
-            onBulkEditRowChanged={this.props.onBulkEditRowChanged}
-            scrollWidth={this.props.scrollWidth}
-          />
-        );
-      } else {
-        return (
-          <this.props.components.Row
-            components={this.props.components}
-            icons={this.props.icons}
-            data={data}
-            index={index}
-            errorState={this.props.errorState}
-            key={"row-" + data.tableData.id}
-            level={0}
-            options={this.props.options}
-            localization={{
-              ...MTableBody.defaultProps.localization.editRow,
-              ...this.props.localization.editRow,
-              dateTimePickerLocalization: this.props.localization
-                .dateTimePickerLocalization,
-            }}
-            onRowSelected={this.props.onRowSelected}
-            actions={this.props.actions}
-            columns={this.props.columns}
-            getFieldValue={this.props.getFieldValue}
-            detailPanel={this.props.detailPanel}
-            path={[index + this.props.pageSize * this.props.currentPage]}
-            onToggleDetailPanel={this.props.onToggleDetailPanel}
-            onRowClick={this.props.onRowClick}
-            isTreeData={this.props.isTreeData}
-            onTreeExpandChanged={this.props.onTreeExpandChanged}
-            onEditingCanceled={this.props.onEditingCanceled}
-            onEditingApproved={this.props.onEditingApproved}
-            hasAnyEditingRow={this.props.hasAnyEditingRow}
-            treeDataMaxLevel={this.props.treeDataMaxLevel}
-            cellEditable={this.props.cellEditable}
-            onCellEditStarted={this.props.onCellEditStarted}
-            onCellEditFinished={this.props.onCellEditFinished}
-            scrollWidth={this.props.scrollWidth}
-          />
-        );
-      }
-    });
-  }
+    function renderUngroupedRows(renderData) {
+        return renderData.map((data, index) => {
+            if (data.tableData.editing || props.bulkEditOpen) {
+                return (<props.components.EditRow
+                    columns={props.columns.filter((columnDef) => {
+                        return !columnDef.hidden;
+                    })}
+                    components={props.components}
+                    data={data}
+                    errorState={props.errorState}
+                    icons={props.icons}
+                    localization={
+                    {
+                        ...MtableBody.defaultProps.localization.editRow,
+                        ...props.localization.editRow,
+                        dateTimePickerLocalization: props.localization.dateTimePickerLocalization
+                    }}
+                    key={`row-${data.tableData.id}`} //NOTE:  This is where the table sets row IDs.  
+                    mode={props.bulkEditOpen ? "bulk" : data.tableData.editing}
+                    options={props.options}
+                    isTreeData={props.isTreeData}
+                    detailPanel={props.detailPanel}
+                    onEditingCanceled={props.onEditingCanceled}
+                    onEditingApproved={props.onEditingApproved}
+                    getFieldValue={props.getFieldValue}
+                    onBulkEditRowChanged={props.onBulkEditRowChanged}
+                    scrollWidth={props.scrollWidth}
+                />);
+            }
+            else {
+                return (
+                    <props.components.Row
+                        components={props.components}
+                        icons={props.icons}
+                        data={data}
+                        index={index}
+                        errorState={props.errorState}
+                        key={`row-${data.tableData.id}`}
+                        level={0}
+                        options={props.options}
+                        localization={{
+                            ...MTableBody.defaultProps.localization.editRow,
+                            ...props.localization.editRow,
+                            dateTimePickerLocalization: props.localization
+                                .dateTimePickerLocalization,
+                        }}
+                        onRowSelected={props.onRowSelected}
+                        actions={props.actions}
+                        columns={props.columns}
+                        getFieldValue={props.getFieldValue}
+                        detailPanel={props.detailPanel}
+                        path={[index + props.pageSize * props.currentPage]}
+                        onToggleDetailPanel={props.onToggleDetailPanel}
+                        onRowClick={props.onRowClick}
+                        isTreeData={props.isTreeData}
+                        onTreeExpandChanged={props.onTreeExpandChanged}
+                        onEditingCanceled={props.onEditingCanceled}
+                        onEditingApproved={props.onEditingApproved}
+                        hasAnyEditingRow={props.hasAnyEditingRow}
+                        treeDataMaxLevel={props.treeDataMaxLevel}
+                        cellEditable={props.cellEditable}
+                        onCellEditStarted={props.onCellEditStarted}
+                        onCellEditFinished={props.onCellEditFinished}
+                        scrollWidth={props.scrollWidth}
+                    />
+                );
+            }
+        });
+    }
 
-  renderGroupedRows(groups, renderData) {
-    return renderData.map((groupData, index) => (
-      <this.props.components.GroupRow
-        actions={this.props.actions}
-        key={groupData.value == null ? "" + index : groupData.value}
-        columns={this.props.columns}
-        components={this.props.components}
-        detailPanel={this.props.detailPanel}
-        getFieldValue={this.props.getFieldValue}
-        groupData={groupData}
-        groups={groups}
-        icons={this.props.icons}
-        level={0}
-        path={[index + this.props.pageSize * this.props.currentPage]}
-        onGroupExpandChanged={this.props.onGroupExpandChanged}
-        onRowSelected={this.props.onRowSelected}
-        onRowClick={this.props.onRowClick}
-        onEditingCanceled={this.props.onEditingCanceled}
-        onEditingApproved={this.props.onEditingApproved}
-        onToggleDetailPanel={this.props.onToggleDetailPanel}
-        onTreeExpandChanged={this.props.onTreeExpandChanged}
-        options={this.props.options}
-        isTreeData={this.props.isTreeData}
-        hasAnyEditingRow={this.props.hasAnyEditingRow}
-        localization={{
-          ...MTableBody.defaultProps.localization.editRow,
-          ...this.props.localization.editRow,
-          dateTimePickerLocalization: this.props.localization
-            .dateTimePickerLocalization,
-        }}
-        cellEditable={this.props.cellEditable}
-        onCellEditStarted={this.props.onCellEditStarted}
-        onCellEditFinished={this.props.onCellEditFinished}
-        onBulkEditRowChanged={this.props.onBulkEditRowChanged}
-        scrollWidth={this.props.scrollWidth}
-      />
-    ));
-  }
+    function renderGroupedRows(groups, renderData) {
+        return renderData.map((groupData, index) => (
+            <props.components.GroupRow
+                actions={props.actions}
+                key={groupData.value == null ? "" + index : groupData.value}
+                columns={props.columns}
+                components={props.components}
+                detailPanel={props.detailPanel}
+                getFieldValue={props.getFieldValue}
+                groupData={groupData}
+                groups={groups}
+                icons={props.icons}
+                level={0}
+                path={[index + props.pageSize * props.currentPage]}
+                onGroupExpandChanged={props.onGroupExpandChanged}
+                onRowSelected={props.onRowSelected}
+                onRowClick={props.onRowClick}
+                onEditingCanceled={props.onEditingCanceled}
+                onEditingApproved={props.onEditingApproved}
+                onToggleDetailPanel={props.onToggleDetailPanel}
+                onTreeExpandChanged={props.onTreeExpandChanged}
+                options={props.options}
+                isTreeData={props.isTreeData}
+                hasAnyEditingRow={props.hasAnyEditingRow}
+                localization={{
+                    ...MTableBody.defaultProps.localization.editRow,
+                    ...props.localization.editRow,
+                    dateTimePickerLocalization: props.localization
+                        .dateTimePickerLocalization,
+                }}
+                cellEditable={props.cellEditable}
+                onCellEditStarted={props.onCellEditStarted}
+                onCellEditFinished={props.onCellEditFinished}
+                onBulkEditRowChanged={props.onBulkEditRowChanged}
+                scrollWidth={props.scrollWidth}
+            />
+        ));
+    }
 
-  render() {
-    let renderData = this.props.renderData;
-    const groups = this.props.columns
-      .filter((col) => col.tableData.groupOrder > -1)
-      .sort(
-        (col1, col2) => col1.tableData.groupOrder - col2.tableData.groupOrder
-      );
 
-    let emptyRowCount = 0;
-    if (this.props.options.paging) {
-      emptyRowCount = this.props.pageSize - renderData.length;
+    let renderData = props.renderData;
+    let emptyRowCount = 0; 
+    const groups = props.columns.filter((col) => col.tableData.groupOrder > -1).sort((col1, col2) => col1.tableData.groupOrder - col2.tableData.groupOrder); 
+
+    if (props.options.paging) {
+        emptyRowCount = props.pageSize - renderData.length;
     }
 
     return (
-      <TableBody>
-        {this.props.options.filtering && (
-          <this.props.components.FilterRow
-            columns={this.props.columns.filter(
-              (columnDef) => !columnDef.hidden
+        <TableBody>
+            {props.options.filtering && (
+                <props.components.FilterRow
+                    columns={props.columns.filter((columnDef) => !columnDef.hidden)}
+                    icons={props.icons}
+                    hasActions={
+                        props.actions.filter((a) => a.position === "row" || typeof a === "function").length > 0
+                    }
+                    actionsColumnIndex={props.options.actionsColumnIndex}
+                    onFilterChanged={props.onFilterChanged}
+                    selection={props.options.selection}
+                    localization={{
+                        ...MTableBody.defaultProps.localization.filterRow,
+                        ...props.localization.filterRow,
+                        dateTimePickerLocalization: props.localization
+                            .dateTimePickerLocalization,
+                    }}
+                    hasDetailPanel={!!props.detailPanel}
+                    detailPanelColumnAlignment={props.options.detailPanelColumnAlignment}
+                    isTreeData={props.isTreeData}
+                    filterCellStyle={props.options.filterCellStyle}
+                    filterRowStyle={props.options.filterRowStyle}
+                    hideFilterIcons={props.options.hideFilterIcons}
+                    scrollWidth={props.scrollWidth}
+                />
             )}
-            icons={this.props.icons}
-            hasActions={
-              this.props.actions.filter(
-                (a) => a.position === "row" || typeof a === "function"
-              ).length > 0
-            }
-            actionsColumnIndex={this.props.options.actionsColumnIndex}
-            onFilterChanged={this.props.onFilterChanged}
-            selection={this.props.options.selection}
-            localization={{
-              ...MTableBody.defaultProps.localization.filterRow,
-              ...this.props.localization.filterRow,
-              dateTimePickerLocalization: this.props.localization
-                .dateTimePickerLocalization,
-            }}
-            hasDetailPanel={!!this.props.detailPanel}
-            detailPanelColumnAlignment={
-              this.props.options.detailPanelColumnAlignment
-            }
-            isTreeData={this.props.isTreeData}
-            filterCellStyle={this.props.options.filterCellStyle}
-            filterRowStyle={this.props.options.filterRowStyle}
-            hideFilterIcons={this.props.options.hideFilterIcons}
-            scrollWidth={this.props.scrollWidth}
-          />
-        )}
-        {this.props.showAddRow &&
-          this.props.options.addRowPosition === "first" && (
-            <this.props.components.EditRow
-              columns={this.props.columns.filter((columnDef) => {
-                return !columnDef.hidden;
-              })}
-              data={this.props.initialFormData}
-              components={this.props.components}
-              errorState={this.props.errorState}
-              icons={this.props.icons}
-              key="key-add-row"
-              mode="add"
-              localization={{
-                ...MTableBody.defaultProps.localization.editRow,
-                ...this.props.localization.editRow,
-                dateTimePickerLocalization: this.props.localization
-                  .dateTimePickerLocalization,
-              }}
-              options={this.props.options}
-              isTreeData={this.props.isTreeData}
-              detailPanel={this.props.detailPanel}
-              onEditingCanceled={this.props.onEditingCanceled}
-              onEditingApproved={this.props.onEditingApproved}
-              getFieldValue={this.props.getFieldValue}
-              scrollWidth={this.props.scrollWidth}
-            />
-          )}
+            {props.showAddRow &&
+                props.options.addRowPosition === "first" && (
+                    <props.components.EditRow
+                        columns={props.columns.filter((columnDef) => {
+                            return !columnDef.hidden;
+                        })}
+                        data={props.initialFormData}
+                        components={props.components}
+                        errorState={props.errorState}
+                        icons={props.icons}
+                        key="key-add-row"
+                        mode="add"
+                        localization={{
+                            ...MTableBody.defaultProps.localization.editRow,
+                            ...props.localization.editRow,
+                            dateTimePickerLocalization: props.localization
+                                .dateTimePickerLocalization,
+                        }}
+                        options={props.options}
+                        isTreeData={props.isTreeData}
+                        detailPanel={props.detailPanel}
+                        onEditingCanceled={props.onEditingCanceled}
+                        onEditingApproved={props.onEditingApproved}
+                        getFieldValue={props.getFieldValue}
+                        scrollWidth={props.scrollWidth}
+                    />
+                )}
 
-        {groups.length > 0
-          ? this.renderGroupedRows(groups, renderData)
-          : this.renderUngroupedRows(renderData)}
+            {groups.length > 0
+                ? renderGroupedRows(groups, renderData)
+                : renderUngroupedRows(renderData)}
 
-        {this.props.showAddRow && this.props.options.addRowPosition === "last" && (
-          <this.props.components.EditRow
-            columns={this.props.columns.filter((columnDef) => {
-              return !columnDef.hidden;
-            })}
-            data={this.props.initialFormData}
-            components={this.props.components}
-            errorState={this.props.errorState}
-            icons={this.props.icons}
-            key="key-add-row"
-            mode="add"
-            localization={{
-              ...MTableBody.defaultProps.localization.editRow,
-              ...this.props.localization.editRow,
-              dateTimePickerLocalization: this.props.localization
-                .dateTimePickerLocalization,
-            }}
-            options={this.props.options}
-            isTreeData={this.props.isTreeData}
-            detailPanel={this.props.detailPanel}
-            onEditingCanceled={this.props.onEditingCanceled}
-            onEditingApproved={this.props.onEditingApproved}
-            getFieldValue={this.props.getFieldValue}
-            scrollWidth={this.props.scrollWidth}
-          />
-        )}
-        {this.renderEmpty(emptyRowCount, renderData)}
-      </TableBody>
+            {props.showAddRow && props.options.addRowPosition === "last" && (
+                <props.components.EditRow
+                    columns={props.columns.filter((columnDef) => {
+                        return !columnDef.hidden;
+                    })}
+                    data={props.initialFormData}
+                    components={props.components}
+                    errorState={props.errorState}
+                    icons={props.icons}
+                    key="key-add-row"
+                    mode="add"
+                    localization={{
+                        ...MTableBody.defaultProps.localization.editRow,
+                        ...props.localization.editRow,
+                        dateTimePickerLocalization: props.localization
+                            .dateTimePickerLocalization,
+                    }}
+                    options={props.options}
+                    isTreeData={props.isTreeData}
+                    detailPanel={props.detailPanel}
+                    onEditingCanceled={props.onEditingCanceled}
+                    onEditingApproved={props.onEditingApproved}
+                    getFieldValue={props.getFieldValue}
+                    scrollWidth={props.scrollWidth}
+                />
+            )}
+            {renderEmpty(emptyRowCount, renderData)}
+        </TableBody>
     );
-  }
 }
+
 
 MTableBody.defaultProps = {
   actions: [],

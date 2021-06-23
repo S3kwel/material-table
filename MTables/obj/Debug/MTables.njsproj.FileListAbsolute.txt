@@ -1,0 +1,3 @@
+C:\Users\dmhic\Desktop\MT\Material-Table\MTables\obj\Debug\MTables.njsprojAssemblyReference.cache
+C:\Users\dmhic\Desktop\MT\Material-Table\MTables\obj\Debug\MTables.njsproj.CoreCompileInputs.cache
+C:\Users\dmhic\Desktop\MT\Material-Table\MTables\bin\Microsoft.NodejsTools.WebRole.dll
